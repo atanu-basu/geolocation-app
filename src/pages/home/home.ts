@@ -31,10 +31,11 @@ export class HomePage {
       this.deleteMarkers();
       snapshotToArray(resp).forEach(data => {
         if (data.uuid !== this.device.uuid) {
-          let image = 'assets/imgs/bluedot.png';
+          let image = 'assets/imgs/blue-bike.png';
           let updatelocation = new google.maps.LatLng(data.latitude, data.longitude);
           this.addMarker(updatelocation, image);
           this.setMapOnAll(this.map);
+          console.log(data.uuid);
         } else {
           let image = 'assets/imgs/bluedot.png';
           let updatelocation = new google.maps.LatLng(data.latitude, data.longitude);
@@ -64,7 +65,7 @@ export class HomePage {
       this.deleteMarkers();
       this.updateGeolocation(this.device.uuid, data.coords.latitude, data.coords.longitude);
       let updatelocation = new google.maps.LatLng(data.coords.latitude, data.coords.longitude);
-      let image = 'assets/imgs/blue-bike.png';
+      let image = 'assets/imgs/bluedot.png';
       this.addMarker(updatelocation, image);
       this.setMapOnAll(this.map);
     });
