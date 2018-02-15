@@ -17,8 +17,9 @@ export class HomePage {
   @ViewChild('map') mapElement: ElementRef;
   map: any;
   markers = [];
-
+  user = firebase.auth().currentUser;
   ref = firebase.database().ref('geolocations/');
+  
   constructor(public navCtrl: NavController,
     public platform: Platform,
     private geolocation: Geolocation,
@@ -26,31 +27,32 @@ export class HomePage {
     platform.ready().then(() => {
       this.initMap();
     });
-   
+
     this.ref.on('value', resp => {
       this.deleteMarkers();
       snapshotToArray(resp).forEach(data => {
-        if (data.uuid !== this.device.uuid) {
+        
+        if (data.uuid === this.device.uuid ) {
           let image = 'assets/imgs/blue-bike.png';
           let updatelocation = new google.maps.LatLng(data.latitude, data.longitude);
           this.addMarker(updatelocation, image);
           this.setMapOnAll(this.map);
           console.log(data.uuid);
-        } else {
+        } /*else {
           let image = 'assets/imgs/bluedot.png';
           let updatelocation = new google.maps.LatLng(data.latitude, data.longitude);
           this.addMarker(updatelocation, image);
           this.setMapOnAll(this.map);
-        }
+        }*/
       });
     });
- 
+
 
   }
   logoutUser() {
     console.log('logged out');
     this.navCtrl.setRoot('LoginPage');
-    return firebase.auth().signOut();    
+    return firebase.auth().signOut();
   }
   initMap() {
     this.geolocation.getCurrentPosition().then((resp) => {
@@ -70,7 +72,7 @@ export class HomePage {
       this.setMapOnAll(this.map);
     });
   }
- 
+
   addMarker(location, image) {
     let marker = new google.maps.Marker({
       position: location,
@@ -78,7 +80,7 @@ export class HomePage {
       icon: image
     });
     let infowindow = new google.maps.InfoWindow({
-      content: 'You are Here!...'
+      content: this.user.email
     });
     marker.addListener('click', function () {
       infowindow.open(this.map, marker);
@@ -104,6 +106,16 @@ export class HomePage {
   }
 
   updateGeolocation(uuid, lat, lng) {
+    /*let conRef = firebase.database().ref("/.info/connected");
+    conRef.on('value', function (snap) {
+      if (snap.val() === true) {
+        alert('connected');
+      } else {
+        alert('Not connected');
+      }
+    })*/
+   
+    //console.log(this.user.email);
     if (localStorage.getItem('mykey')) {
       firebase.database().ref('geolocations/' + localStorage.getItem('mykey')).set({
         uuid: uuid,

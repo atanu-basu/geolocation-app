@@ -2,7 +2,7 @@ import { AngularFireAuthModule, AngularFireAuth } from 'angularfire2/auth';
 import { Users } from './../../app/app.users';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-
+import * as firebase from 'firebase';
 
 
 @IonicPage()
@@ -13,12 +13,15 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 export class LoginPage {
   user = { } as Users;
   constructor(private afAuth: AngularFireAuth, public navCtrl: NavController, public navParams: NavParams) {
+    
   }
 
   async login(user: Users) {
     try {
       const result =  await this.afAuth.auth.signInWithEmailAndPassword(user.email,user.password);
-
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION).then(function() {
+        return result;
+      })
       if (result) {
         this.navCtrl.setRoot('HomePage');
       }
